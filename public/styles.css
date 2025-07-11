@@ -1,34 +1,288 @@
-body{
-    font-family: Arial, sans-serif;
+/* public/styles/main.css - White Navbar Background, Rectangular Logo */
+
+/* Color Palette:
+   - Primary Dark Blue: #1a2a40 (For footer and text on white background)
+   - Accent Blue: #4a77a8 (For buttons, links in dark sections)
+   - Light Text on Dark: #e0e0e0 (For contrasting text on dark backgrounds)
+   - Dark Text on Light: #333333 (Standard dark text for content areas)
+   - Background White: #FFFFFF (For navbar and main content)
+   - Light Gray Border/Divider: #cccccc
+*/
+
+/* Basic Reset & Box-Sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-    background-color: #f4f4f4;
-    color: #333;
-
+    background-color: #f0f4f8; /* A very light blue-gray for the body's outer background */
+    color: #333333; /* Default dark text color */
 }
 
-
+/* Universal Container for consistent width */
 .container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(3, 3, 3, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #FFFFFF; /* White background for navbar */
+    color: #333333; /* Dark text for navbar content (links) */
+    padding: 15px 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow for white background */
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Styling for the App Logo (img tag) - Rectangular */
+.app-logo {
+    height: 45px; /* Adjust height as needed for your rectangular logo */
+    width: auto; /* Maintain aspect ratio */
+    margin-right: 0; /* No margin if it's the only element in app-info */
+    border-radius: 0; /* Ensure no rounding for rectangular logo */
+    border: none; /* No border around the logo */
+    vertical-align: middle;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 25px;
+}
+
+.nav-links li a {
+    color: #1a2a40; /* Dark blue for navbar links on white background */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease; /* Removed text-shadow as it doesn't fit white background */
+}
+
+.nav-links li a:hover {
+    color: #4a77a8; /* Accent blue on hover for navbar links */
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    background-color: #FFFFFF; /* White background for the main content area */
+    color: #333333; /* Dark text for content */
+}
+
+.form-container {
+    background-color: #FFFFFF; /* White background for the form container */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
     box-sizing: border-box;
+    border: 1px solid #e0e0e0;
 }
 
-
-header{
-    
+.form-container h1 {
+    color: #1a2a40; /* Dark blue heading on white background */
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    text-shadow: none;
 }
 
-label{
+label {
     display: block;
-    width: fit-content;
-    padding: 4px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333333;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 25px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #f9f9f9;
+    color: #333333;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #4a77a8;
+    box-shadow: 0 0 0 3px rgba(74, 119, 168, 0.3);
+}
+
+small {
+    display: block;
+    margin-top: -20px;
+    margin-bottom: 25px;
+    color: #666666;
+    font-size: 0.8em;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4a77a8; /* Accent Blue for button */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background-color: #6daee3; /* Lighter accent blue on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#paymentStatus {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f0f4f8;
+    color: #333333;
+    text-align: center;
+    font-size: 1.1em;
+    word-wrap: break-word;
+    border: 1px solid #cccccc;
+}
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #1a2a40; /* Primary Dark Blue */
+    color: #a0a0a0; /* Light gray text for footer */
+    padding: 20px 0;
+    text-align: center;
+    margin-top: auto;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer p {
+    margin-bottom: 12px;
+    font-size: 0.9em;
+}
+
+.footer-links a {
+    color: #a0a0a0;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #6daee3;
+}
+
+/* Basic Responsiveness */
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .nav-links {
+        margin-top: 15px;
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav-links li {
+        margin: 5px 0;
+    }
+    .form-container {
+        width: 90%;
+        padding: 30px;
+    }
+    input[type="number"],
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        margin-bottom: 20px;
+    }
+    small {
+        margin-bottom: 20px;
+    }
+    .footer p {
+        margin-bottom: 8px;
+    }
+    .footer-links a {
+        margin: 0 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 20px;
+    }
+    .form-container h1 {
+        font-size: 1.8em;
+    }
+    button {
+        font-size: 1em;
+        padding: 12px;
+    }
 }
