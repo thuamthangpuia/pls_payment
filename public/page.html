@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <header>
+        <div>
+            <img src="https://placehold.co/40x40/000/FFF?text=LOGO" alt="App Logo">
+            <span>App Name</span>
+        </div>
+        <nav>
+            <ul >
+                <li>Home</a></li>
+                <li>About Us</a></li>
+                <li>Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Make a Payment</h1>
+        <form id="paymentForm">
+            <label for="amount">Amount (INR):</label>
+            <input type="number" id="amount" value="500" min="1" required>
+            <small>Enter amount in Rupees (e.g., 500 for ₹500.00)</small>
+            <br>
+            <label for="description">Description:</label>
+            <input type="text" id="description" placeholder="Description" required>
+            <br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter name here" required>
+            <br>
+            <label for="class">Enter your class ( eg:IX,X,BA):</label>
+                <select name="cars" id="cars">
+                    <option value="9">IX</option>
+                    <option value="10">X</option>
+                    <option value="BA">B.A</option>
+                    <option value="BSc">B.Sc</option>
+                </select>
+            <br><br>
+            <button type="submit">Pay Now</button>
+        </form>
+        <div id="paymentStatus"></div>
+    </div>
+</body>

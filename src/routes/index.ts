@@ -1,11 +1,14 @@
 import { Request,Response } from "express";
 import express from 'express'
-import { createPayment, verifyPayment } from "../api/payment";
+import { createPayment } from "../api/create-payment.ts";
+import { verifyPayment } from "../api/verify-payment.ts";
+
 
 var router = express.Router();
 
 /* GET home page. */
-router.get("/api/create-payment",createPayment)
-router.post("/api/verify-payment",verifyPayment)
+router.post("/create-payment",createPayment)
+router.post("/verify-payment",verifyPayment)
 
-module.exports = router;
+
+export default router

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Razorpay Payment Test</title>
+    <!-- Include Razorpay Checkout script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="number"],
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #paymentStatus {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            color: #495057;
+            text-align: center;
+            font-size: 1em;
+            word-wrap: break-word;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #e2eaf3; color: white; padding: 15px 20px; display: fsgg; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center;">
+            <!-- App Logo -->
+            <img src="https://placehold.co/40x40/000/FFF?text=LOGO" alt="App Logo" style="height: 40px; width: 40px; border-radius: 50%; margin-right: 10px;">
+            <!-- App Name -->
+            <span style="font-size: 1.5em; font-weight: bold;">AppName </span>
+        </div>
+        <nav>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex;">
+                <li style="margin-left: 20px;"><a href="#" style="color: white; text-decoration: none; font-weight: bold;">Home</a></li>
+                <li style="margin-left: 20px;"><a href="#" style="color: white; text-decoration: none; font-weight: bold;">About Us</a></li>
+                <li style="margin-left: 20px;"><a href="#" style="color: white; text-decoration: none; font-weight: bold;">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Make a Payment</h1>
+        <form id="paymentForm">
+            <label for="amount">Amount (INR):</label>
+            <input type="number" id="amount"  min="1" required>
+            <small>Enter amount in Rupees (e.g., 500 for ₹500.00)</small>
+            <br>
+            <label for="description">Description:</label>
+            <input type="text" id="description" value="Test Product Purchase" required>
+            <br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter name here" required>
+            <br>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" placeholder="Enter phone number" required >
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter email" required>
+            <br>
+            <label for="grade">Enter your class:</label>
+                <select name="grade" id="grade">
+                    <option value="9">IX</option>
+                    <option value="10">X</option>
+                    <option value="BA">B.A</option>
+                    <option value="BSc">B.Sc</option>
+                </select>
+            <br><br>
+            <button type="submit">Pay Now</button>
+        </form>
+        <div id="paymentStatus"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3000'; // Replace with your backend URL
+        const RAZORPAY_KEY_ID = 'rzp_test_JuPxU5cqhKNUhZ'; // Replace with your actual Razorpay Key ID
+
+       
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const amountInRupees = parseFloat(document.getElementById('amount').value);
+            // Razorpay expects amount in the smallest currency unit (e.g., paise for INR)
+            const amountInPaise = Math.round(amountInRupees * 100);
+            const description = document.getElementById('description').value;
+            const grade = document.getElementById('grade').value;
+            const name = document.getElementById('name').value;
+            const finalDescription = description+(', Class:')+grade+(", Name:")+name;
+            const phone = document.getElementById('phone').value;
+
+            console.log('name------->',name)
+            const paymentStatusDiv = document.getElementById('paymentStatus');
+            paymentStatusDiv.className = '';
+            paymentStatusDiv.textContent = 'Initiating payment... Please wait.';
+
+            try {
+                // 1. Call backend to create Razorpay Order
+                const createOrderResponse = await fetch(`${BACKEND_URL}/api/create-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: amountInPaise,
+                        description: finalDescription,
+                        name:name,
+                    })
+                });
+
+                if (!createOrderResponse.ok) {
+                    const errorData = await createOrderResponse.json();
+                    throw new Error(errorData.error || 'Failed to create order on backend.');
+                }
+
+                const orderData = await createOrderResponse.json();
+                const razorpayOrderId = orderData.id; 
+                console.log("NAME --->",name)
+
+                // 2. Configure Razorpay Checkout options
+                const options = {
+                    key: RAZORPAY_KEY_ID,
+                    amount: amountInPaise,
+                    currency: 'INR',      
+                    name: 'LushAITech', 
+                    description: finalDescription,
+                    order_id: razorpayOrderId, 
+                    handler: async function (response) {
+                        // This function is called on successful payment from Razorpay Checkout
+                        paymentStatusDiv.className = '';
+                        paymentStatusDiv.textContent = 'Payment successful! Verifying with backend...';
+
+                        try {
+                            // 3. Send payment details to backend for verification
+                            const verifyResponse = await fetch(`${BACKEND_URL}/api/verify-payment`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    name:name,
+                                })
+                            });
+
+                            const verifyResult = await verifyResponse.json();
+
+                            if (verifyResponse.ok && verifyResult.success) {
+                                paymentStatusDiv.className = 'success';
+                                paymentStatusDiv.textContent = 'Payment successfully verified and recorded!';
+                                alert('Payment successful and verified!');
+                            } else {
+                                throw new Error(verifyResult.error || 'Payment verification failed on backend.');
+                            }
+
+                        } catch (error) {
+                            console.error('Payment verification error:', error);
+                            paymentStatusDiv.className = 'error';
+                            paymentStatusDiv.textContent = `Payment verification failed: ${error.message}`;
+                            alert(`Payment verification failed: ${error.message}`);
+                        }
+                    },
+                    prefill: {
+                        // Optional: prefill user details if you have them
+                        name: name,
+                        email: email,
+                        contact: phone,
+                    },
+                    notes: {
+                        'app_description': "LushAi"
+                    },
+                    theme: {
+                        "color": "#3399CC" // Customize checkout theme
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    console.error('Payment failed:', response.error);
+                    paymentStatusDiv.className = 'error';
+                    paymentStatusDiv.textContent = `Payment failed: ${response.error.description || 'Unknown error'}`;
+                    alert(`Payment failed: ${response.error.description}`);
+                });
+
+                rzp.open(); 
+
+            } catch (error) {
+                console.error('Error initiating payment:', error);
+                paymentStatusDiv.className = 'error';
+                paymentStatusDiv.textContent = `Error: ${error.message}`;
+                alert(`Error initiating payment: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
