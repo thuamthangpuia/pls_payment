@@ -10,8 +10,12 @@ const transporter = nodemailer.createTransport({
     port: parseInt(process.env.EMAIL_PORT || '587', 10), // 587 for TLS, 465 for SSL
     secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER, 
-        pass: process.env.EMAIL_PASS, 
+        type:'OAuth2',
+        user:'lushaiemailsender@gmail.com',
+        clientId:process.env.OAUTH_CLIENT_ID,
+        clientSecret:process.env.OAUTH_CLIENT_SECRET,
+        refreshToken:process.env.OAUTH_REFRESH_TOKEN,
+        
     },
     // Optional: For debugging, uncomment this
     // logger: true,

@@ -17,6 +17,7 @@ interface ReceiptEmailData {
  */
 export async function sendReceiptEmail(data: ReceiptEmailData) {
     const { recipientEmail, customerName,description, amount, currency,  orderId, paymentId, transactionDate } = data;
+    console.log(data)
 
     const emailHtml = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -66,7 +67,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData) {
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log('Receipt email sent: %s', info.messageId);
+        console.log('Receipt email sent: %s', info.messageId, 'to - ',recipientEmail);
         return true;
     } catch (error) {
         console.error('Failed to send receipt email:', error);

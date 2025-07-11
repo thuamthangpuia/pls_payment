@@ -2,6 +2,7 @@ import {Request,Response} from 'express'
 import Razorpay from 'razorpay';
 import { db } from '../config/dbconfig.ts';
 import { paymentInLushaieduPayment } from '../models/schema.ts';
+import 'dotenv/config';
 
 const razorpay = new Razorpay({
     key_id: process.env.razorpay_key_id,
@@ -19,7 +20,7 @@ export async function createPayment(req: Request, res: Response) {
          return
     }
 
-    console.log("amount-->",amount)
+    console.log("amoupkppkpnt-->",amount)
     const options = {
         amount: amount, 
         currency: 'INR',
