@@ -7,7 +7,7 @@ export default function razorpay_key(req: Request, res: Response) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   // Get the key from environment variable
-  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keyId = process.env.razorpay_key_id;
   if (!keyId) {
     return res.status(500).json({ error: 'Razorpay Key ID not configured' });
   }

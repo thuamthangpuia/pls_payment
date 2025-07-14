@@ -23,11 +23,10 @@
             <h1>Make a Payment</h1>
             <form id="paymentForm">
                 <label for="amount">Amount (INR):</label>
-                <input type="number" id="amount" min="1" required>
-                <small>Enter amount in Rupees </small>
+                <input type="number" id="amount" min="1" required placeholder="Enter amount in Rupees ">
                 <br>
                 <label for="description">Description:</label>
-                <input type="text" id="description" placeholder="Description" required>
+                <input type="text" id="description" placeholder="e.g., July Fee, March Fee" required>
                 <br>
                 <label for="name">Name:</label>
                 <input type="text" id="name" placeholder="Enter name here" required>
@@ -41,10 +40,12 @@
                 <label for="grade">Enter your class:</label>
                 <select name="grade" id="grade">
                     <option value="" disabled selected hidden>Select your class</option>
+                    <option value="8">VIII</option>
                     <option value="9">IX</option>
                     <option value="10">X</option>
-                    <option value="BA">B.A</option>
-                    <option value="BSc">B.Sc</option>
+                    <option value="11">XI</option>
+                    <option value="12">XII</option>
+                    
                 </select>
                 <br>
                 <label>Subjects:</label>

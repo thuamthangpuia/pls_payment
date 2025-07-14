@@ -50,7 +50,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData,pdfBuffer:Buffer |
                 </tr>
             </table>
             <p>If you have any questions, please contact us.</p>
-            <p>Sincerely,<br>LushAI Tuition </p>
+            <p>Sincerely,<br>LushAIEdu Tuition </p>
         </div>
     `;
 

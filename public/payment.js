@@ -11,14 +11,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const description = document.getElementById('description').value;
         const grade = document.getElementById('grade').value;
         const name = document.getElementById('name').value;
-        const subjectsString = subjects.length > 0 ? (', Subjects: ' + subjects.join(', ')) : '';
         const phone = document.getElementById('phone').value;
         const email = document.getElementById('email').value;
         const paymentStatusDiv = document.getElementById('paymentStatus');
         paymentStatusDiv.className = '';
         paymentStatusDiv.textContent = 'Initiating payment... Please wait.';
 
-        const BACKEND_URL = 'http://localhost:3000';
+        const BACKEND_URL = 'https://tuitionfee.lushaitech.com';
         try {
     
             const createOrderResponse = await fetch(`${BACKEND_URL}/api/create-payment`, {
@@ -108,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 openBtn.textContent = 'OK';
                                 document.getElementById('closeModalBtn').style.display = 'none';
                             } else {
-                                throw new Error(verifyResult.error || 'Payment verification failed on backend.');
+                                throw new Error(verifyResult.error || 'Payment verification failed.');
                             }
                         }
                     } catch (error) {
@@ -144,6 +143,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             rzp.open();
+            // Handle Razorpay modal dismissal (user exits without paying)
+            rzp.on('modal.closed', function () {
+                paymentStatusDiv.className = 'error';
+                paymentStatusDiv.textContent = 'Payment was not completed. You exited the payment window.';
+            });
         } catch (error) {
             console.error('Error initiating payment:', error);
             paymentStatusDiv.className = 'error';
