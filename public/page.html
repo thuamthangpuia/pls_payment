@@ -15,7 +15,7 @@
             const finalDescription = description+(', Class:')+grade+(", Name:")+name;
             const phone = document.getElementById('phone').value;
 
-            console.log('name------->',name)
+            // console.log('name------->',name)
             const paymentStatusDiv = document.getElementById('paymentStatus');
             paymentStatusDiv.className = '';
             paymentStatusDiv.textContent = 'Initiating payment... Please wait.';
@@ -39,7 +39,7 @@
 
                 const orderData = await createOrderResponse.json();
                 const razorpayOrderId = orderData.id; 
-                console.log("NAME --->",name)
+                // console.log("NAME --->",name)
 
                 // 2. Configure Razorpay Checkout options
                 const options = {
@@ -71,8 +71,8 @@
 
                             if (verifyResponse.ok && verifyResult.success) {
                                 paymentStatusDiv.className = 'success';
-                                paymentStatusDiv.textContent = 'Payment successfully verified and recorded!';
-                                alert('Payment successful and verified!');
+                                paymentStatusDiv.textContent = 'Payment successful';
+                                // alert('Payment successful and verified!');
                             } else {
                                 throw new Error(verifyResult.error || 'Payment verification failed on backend.');
                             }
@@ -81,7 +81,7 @@
                             console.error('Payment verification error:', error);
                             paymentStatusDiv.className = 'error';
                             paymentStatusDiv.textContent = `Payment verification failed: ${error.message}`;
-                            alert(`Payment verification failed: ${error.message}`);
+                            // alert(`Payment verification failed: ${error.message}`);
                         }
                     },
                     prefill: {
@@ -103,7 +103,7 @@
                     console.error('Payment failed:', response.error);
                     paymentStatusDiv.className = 'error';
                     paymentStatusDiv.textContent = `Payment failed: ${response.error.description || 'Unknown error'}`;
-                    alert(`Payment failed: ${response.error.description}`);
+                    // alert(`Payment failed: ${response.error.description}`);
                 });
 
                 rzp.open(); 
@@ -112,7 +112,7 @@
                 console.error('Error initiating payment:', error);
                 paymentStatusDiv.className = 'error';
                 paymentStatusDiv.textContent = `Error: ${error.message}`;
-                alert(`Error initiating payment: ${error.message}`);
+                // alert(`Error initiating payment: ${error.message}`);
             }
         });
     </script>

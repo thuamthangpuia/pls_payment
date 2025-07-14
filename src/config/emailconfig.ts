@@ -22,6 +22,8 @@ const transporter = nodemailer.createTransport({
     // debug: true,
 });
 
+// console.log(transporter)
+
 // Verify connection configuration (optional, but good for debugging)
 transporter.verify(function (error, success) {
     if (error) {

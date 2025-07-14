@@ -17,4 +17,5 @@ export const paymentInLushaieduPayment = lushaieduPayment.table("payment", {
 	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
 	name: varchar({ length: 255 }),
+	subjects: varchar().array(),
 });

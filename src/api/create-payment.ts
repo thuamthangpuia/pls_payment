@@ -13,25 +13,26 @@ export async function createPayment(req: Request, res: Response) {
     if(!req.body.amount){
         res.status(400).json({error:"amount not given"})
     }
-    const {description,name}=req.body
+    const {description,name,subjects}=req.body
     const amount=parseInt(req.body.amount,10)
     if (!amount || typeof amount !== 'number' || amount <= 0) {
          res.status(400).json({ error: 'Invalid amount provided.' });
          return
     }
 
-    console.log("amoupkppkpnt-->",amount)
+    // console.log("amoupnt-->",amount)
     const options = {
         amount: amount, 
         currency: 'INR',
         receipt: `receipt_order_${Date.now()}`, 
         payment_capture: 1 
     };
-    console.log('options---->',options)
+
 
     try {
         const order = await razorpay.orders.create(options);
         console.log('Order created:', order);
+        console.log("SUBJECyTS--->",subjects)
 
         await db.insert(paymentInLushaieduPayment).values({
             razorpayOrderId: order.id,
@@ -41,8 +42,9 @@ export async function createPayment(req: Request, res: Response) {
             status: 'created', 
             description: description || null, 
             createdAt: new Date().toISOString(), 
+            subjects: subjects,
         });
-        console.log('Order saved to database:', order.id);
+        // console.log('Order saved to database:', order.id);
 
         res.status(200).json(order);
     } catch (error: any) {

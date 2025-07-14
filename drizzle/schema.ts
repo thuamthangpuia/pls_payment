@@ -2,6 +2,7 @@ import { pgTable, pgSchema, integer, varchar, timestamp } from "drizzle-orm/pg-c
 import { sql } from "drizzle-orm"
 
 export const lushaieduPayment = pgSchema("lushaiedu_payment");
+export const subjectTypesInLushaieduPayment = lushaieduPayment.enum("subject_types", ['Science', 'Mathematics', 'Chemistry'])
 
 
 export const paymentInLushaieduPayment = lushaieduPayment.table("payment", {
@@ -16,5 +17,6 @@ export const paymentInLushaieduPayment = lushaieduPayment.table("payment", {
 	razorpaySignature: varchar("razorpay_signature", { length: 255 }),
 	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
-	name: varchar({ length: 255 }),
+	name: varchar(),
+	subjects: varchar().array(),
 });
