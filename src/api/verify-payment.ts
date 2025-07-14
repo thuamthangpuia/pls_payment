@@ -84,7 +84,7 @@ export async function verifyPayment(req: Request, res: Response) {
     const ReceiptData = {
         recipientEmail: paymentEntity.email,
         customerName: req.body.name,
-        amount: (Number(paymentEntity.amount) / 100),
+        amount: (Number(paymentEntity.amount))/100,
         description: paymentEntity.description,
         name:paymentEntity.notes.name,
         grade:paymentEntity.notes.grade,

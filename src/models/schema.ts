@@ -18,4 +18,5 @@ export const paymentInLushaieduPayment = lushaieduPayment.table("payment", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
 	name: varchar({ length: 255 }),
 	subjects: varchar().array(),
+	grade: varchar({ length: 20})
 });

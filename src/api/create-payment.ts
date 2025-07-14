@@ -3,6 +3,7 @@ import Razorpay from 'razorpay';
 import { db } from '../config/dbconfig.ts';
 import { paymentInLushaieduPayment } from '../models/schema.ts';
 import 'dotenv/config';
+import { gt } from 'drizzle-orm';
 
 const razorpay = new Razorpay({
     key_id: process.env.razorpay_key_id,
@@ -13,7 +14,7 @@ export async function createPayment(req: Request, res: Response) {
     if(!req.body.amount){
         res.status(400).json({error:"amount not given"})
     }
-    const {description,name,subjects}=req.body
+    const {description,name,subjects,grade}=req.body
     const amount=parseInt(req.body.amount,10)
     if (!amount || typeof amount !== 'number' || amount <= 0) {
          res.status(400).json({ error: 'Invalid amount provided.' });
@@ -36,13 +37,14 @@ export async function createPayment(req: Request, res: Response) {
 
         await db.insert(paymentInLushaieduPayment).values({
             razorpayOrderId: order.id,
-            amount: Number(order.amount),
+            amount: Number(order.amount)/100,
             currency: order.currency,
             name:name,
             status: 'created', 
             description: description || null, 
             createdAt: new Date().toISOString(), 
             subjects: subjects,
+            grade:grade
         });
         // console.log('Order saved to database:', order.id);
 

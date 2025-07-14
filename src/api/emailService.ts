@@ -24,7 +24,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData,pdfBuffer:Buffer |
 
     const emailHtml = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h2 style="color: #007bff;">Payment Receipt from LushAI Tuition</h2>
+            <h2 style="color: #007bff;">Payment Receipt from LushAIEdu Tuition</h2>
             <p>Dear ${customerName || 'Customer'},</p>
             <p>Thank you for your payment!</p>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
