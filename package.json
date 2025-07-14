@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "npx tsc && node ./bin/www"
+    "start": "tsc && node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
