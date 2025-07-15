@@ -143,7 +143,7 @@ async function generatePdfReceipt(paymentDetails: typeof ReceiptData): Promise<B
 
 
         // --- Header Section ---
-        const logoText = 'LushaiEdu Tuition';
+        const logoText = 'LushAIEdu Tuition';
 
         // Company Name/Logo (Left Aligned)
         doc.fillColor(primaryColor)
