@@ -249,7 +249,6 @@ async function generatePdfReceipt(paymentDetails: typeof ReceiptData): Promise<B
 
         // --- Footer ---
         doc.fillColor(accentColor).fontSize(10).font('Helvetica');
-        doc.text('Thank you for your business!', { align: 'center' });
         doc.text('For support, visit lushaitech.com or contact us.', { align: 'center' });
         doc.moveDown(0.5);
         doc.text(`© ${new Date().getFullYear()} LushaiTech. All rights reserved.`, { align: 'center' });
