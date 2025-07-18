@@ -88,12 +88,12 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <!-- Reordered column headers -->
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subjects</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
@@ -205,13 +205,16 @@
                 paymentsTableContainer.classList.remove('hidden');
                 paymentsTableBody.innerHTML = ''; // Clear existing rows
 
-                payments.forEach(payment => {
+                // Sort payments by ID in descending order
+                const sortedPayments = [...payments].sort((a, b) => b.id - a.id);
+
+                sortedPayments.forEach(payment => {
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50';
                     row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${payment.id}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.name}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.amount} ${payment.currency}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.description}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                 ${payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
@@ -219,7 +222,6 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.method}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.description}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                             ${Array.isArray(payment.subjects) ? payment.subjects.join(', ') : payment.subjects}
                         </td>
@@ -251,7 +253,8 @@
             payments = [];
             updateUI(); // Update UI to show loading state
 
-            let url = 'https://tuitionfee.lushaitech.com/api/get-payments'; // Assuming your API is relative to the current host
+            // FIX: Use an absolute URL for the API endpoint
+            let url = 'https://tuitionfee.lushaitech.com/api/get-payments'; // Assuming your backend runs on localhost:3000
             const { startDate, endDate } = calculateDateRange(selectedRange);
 
             if (startDate && endDate) {
@@ -270,7 +273,7 @@
                     throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                payments = data;
+                payments = data; // Assign fetched data
             } catch (err) {
                 error = err.message;
                 console.error("Fetch error:", err);
