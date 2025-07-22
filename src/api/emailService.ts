@@ -17,7 +17,7 @@ interface ReceiptEmailData {
  */
 export async function sendReceiptEmail(data: ReceiptEmailData,pdfBuffer:Buffer | undefined) {
     const { recipientEmail, customerName, description, amount, currency, orderId, paymentId, transactionDate } = data;
-    console.log(data);
+    // console.log(data);
 
     // Format transaction date as local time string
    

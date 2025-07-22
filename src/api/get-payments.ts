@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { db } from "../config/dbconfig.ts";
-import { and, between, eq } from "drizzle-orm";
+import { between } from "drizzle-orm";
 import { paymentInLushaieduPayment } from "../models/schema.ts";
 
 
 export async function getPayments(req: Request, res: Response) {
-    console.log(req.session)
+    // console.log(req.session)
 
     if(!req.session.user){
         res.status(401).json("Unauthorized")
@@ -30,11 +30,7 @@ export async function getPayments(req: Request, res: Response) {
             const formattedRangeEnd = rangeEnd.toISOString().split('T')[0];
 
             const paymentsData = await db.query.paymentInLushaieduPayment.findMany({
-                where: and(
-                    between(paymentInLushaieduPayment.createdAt, formattedRangeStart, formattedRangeEnd),
-                    eq(paymentInLushaieduPayment.status, "paid")
-                ),
-
+                where: between(paymentInLushaieduPayment.createdAt, formattedRangeStart, formattedRangeEnd),
             });
 
             return res.status(200).json(paymentsData);
@@ -44,9 +40,7 @@ export async function getPayments(req: Request, res: Response) {
         }
     } else {
         try {
-            const allPayments = await db.query.paymentInLushaieduPayment.findMany({
-                where: (eq(paymentInLushaieduPayment.status,"paid"))
-            });
+            const allPayments = await db.query.paymentInLushaieduPayment.findMany();
             return res.status(200).json(allPayments);
         } catch (error) {
             console.error('Error fetching all payments:', error);

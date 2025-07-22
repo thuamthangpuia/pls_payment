@@ -49,7 +49,7 @@ export async function verifyPayment(req: Request, res: Response) {
     try{
             
             paymentMethod = paymentEntity.method; 
-            console.log('Payment method fetched from Razorpay API:', paymentMethod);
+            // console.log('Payment method fetched from Razorpay API:', paymentMethod);
         } catch (fetchError: any) {
             console.error('Error fetching payment details from Razorpay API:', fetchError);
            
@@ -68,7 +68,7 @@ export async function verifyPayment(req: Request, res: Response) {
                 method:paymentMethod, // Use ISO string for 'string' mode timestamp
             })
             .where(eq(paymentInLushaieduPayment.razorpayOrderId, razorpay_order_id)); 
-        console.log(`Payment record for order ${razorpay_order_id} updated in DB.`);
+        // console.log(`Payment record for order ${razorpay_order_id} updated in DB.`);
     } catch (dbError: any) {
         console.error('Error updating payment in database:', dbError);
         // Do not return here, as the payment might still be valid even if DB update fails

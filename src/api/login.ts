@@ -10,11 +10,11 @@ export const login = (req: Request, res: Response) => {
   const username = String(req.body.username) 
   const password = String(req.body.password)
 
-  console.log("USERNAME",username,password,USER)
+  // console.log("USERNAME",username,password,USER)
 
   if (username === USER.username && password === USER.password) {
     req.session.user =username ;
-    console.log(req.session)
+    // console.log(req.session)
     res.status(200).json({ message: 'Login successful' });
     return
   }

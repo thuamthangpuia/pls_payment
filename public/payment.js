@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const amountInRupees = parseFloat(document.getElementById('amount').value);
         const subjectCheckboxes = document.querySelectorAll('input[name="subjects"]:checked');
         const subjects = Array.from(subjectCheckboxes).map(cb => cb.value);
-        console.log('Selected subjects:', subjects);
+        // console.log('Selected subjects:', subjects);
         // Razorpay expects amount in the smallest currency unit (e.g., paise for INR)
         const amountInPaise = Math.round(amountInRupees * 100);
         const description = document.getElementById('description').value;

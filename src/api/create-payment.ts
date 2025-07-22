@@ -32,8 +32,8 @@ export async function createPayment(req: Request, res: Response) {
 
     try {
         const order = await razorpay.orders.create(options);
-        console.log('Order created:', order);
-        console.log("SUBJECyTS--->",subjects)
+        // console.log('Order created:', order);
+        // console.log("SUBJECyTS--->",subjects)
 
         await db.insert(paymentInLushaieduPayment).values({
             razorpayOrderId: order.id,
