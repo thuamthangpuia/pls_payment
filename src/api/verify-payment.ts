@@ -103,10 +103,10 @@ export async function verifyPayment(req: Request, res: Response) {
     } catch (pdfError) {
         console.error('Failed to generate PDF receipt:', pdfError);
     }
-    console.log(pdfBuffer)  
+    // console.log(pdfBuffer)  
 
     // Send the receipt email (with or without PDF)
-    sendReceiptEmail(ReceiptData,pdfBuffer);
+    // sendReceiptEmail(ReceiptData,pdfBuffer);
 
     if (verificationSuccess && pdfBuffer) {
         // Set headers to prompt download and open in new tab

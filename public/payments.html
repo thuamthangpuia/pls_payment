@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Dashboard</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for Inter font and additional styling */
@@ -47,10 +46,15 @@
 </head>
 <body class="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
 
-    <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-6xl">
+    <div id="dashboard-container" class="bg-white shadow-lg rounded-xl p-6 w-full max-w-6xl">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Payment Dashboard</h1>
 
-        <!-- Timeframe Selection Buttons -->
+        <div class="flex justify-end mb-4">
+            <button id="logout-button" class="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 shadow-md transition-all duration-200 ease-in-out">
+                Logout
+            </button>
+        </div>
+
         <div id="timeframe-buttons" class="flex flex-wrap justify-center gap-3 mb-6">
             <button data-range="allTime" class="px-5 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out bg-blue-600 text-white shadow-md">All Time</button>
             <button data-range="last7days" class="px-5 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out bg-gray-200 text-gray-700 hover:bg-blue-100 hover:text-blue-700">Last 7 Days</button>
@@ -59,7 +63,6 @@
             <button data-range="lastMonth" class="px-5 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out bg-gray-200 text-gray-700 hover:bg-blue-100 hover:text-blue-700">Last Month</button>
         </div>
 
-        <!-- Custom Date Range Input -->
         <div class="flex flex-wrap justify-center items-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg shadow-inner">
             <label for="startDate" class="text-gray-700 font-medium">From:</label>
             <input
@@ -81,14 +84,12 @@
             </button>
         </div>
 
-        <!-- Loading, Error, and Data Display -->
         <div id="statusMessage" class="text-center py-8"></div>
 
         <div id="paymentsTableContainer" class="overflow-x-auto rounded-lg shadow-md border border-gray-200 hidden">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <!-- Reordered column headers -->
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
@@ -100,224 +101,217 @@
                     </tr>
                 </thead>
                 <tbody id="paymentsTableBody" class="bg-white divide-y divide-gray-200">
-                    <!-- Payment rows will be inserted here by JavaScript -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // DOM Elements
-        const timeframeButtons = document.getElementById('timeframe-buttons');
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const applyCustomRangeBtn = document.getElementById('applyCustomRange');
-        const resetRangeBtn = document.getElementById('resetRange');
-        const statusMessageDiv = document.getElementById('statusMessage');
-        const paymentsTableContainer = document.getElementById('paymentsTableContainer');
-        const paymentsTableBody = document.getElementById('paymentsTableBody');
+    // ✅ Define backend base URL once at the top
+    const BACKEND_URL = 'https://tuitionfee.lushaitech.com';
 
-        // State variables (mimicking React's useState)
-        let selectedRange = 'allTime';
-        let customStartDate = '';
-        let customEndDate = '';
-        let loading = false;
-        let error = null;
-        let payments = [];
+    // DOM Elements
+    const logoutButton = document.getElementById('logout-button');
+    const timeframeButtons = document.getElementById('timeframe-buttons');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const applyCustomRangeBtn = document.getElementById('applyCustomRange');
+    const resetRangeBtn = document.getElementById('resetRange');
+    const statusMessageDiv = document.getElementById('statusMessage');
+    const paymentsTableContainer = document.getElementById('paymentsTableContainer');
+    const paymentsTableBody = document.getElementById('paymentsTableBody');
 
-        // Helper function to format dates as YYYY-MM-DD
-        const formatDate = (date) => {
-            if (!date) return '';
-            const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
+    // State variables
+    let selectedRange = 'allTime';
+    let customStartDate = '';
+    let customEndDate = '';
+    let loading = false;
+    let error = null;
+    let payments = [];
 
-        // Function to calculate date ranges based on selection
-        const calculateDateRange = (rangeType) => {
-            const today = new Date();
-            let startDate = null;
-            let endDate = today; // Default end date is today for most ranges
+    const formatDate = (date) => {
+        if (!date) return '';
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
-            switch (rangeType) {
-                case 'allTime':
-                    startDate = null;
-                    endDate = null;
-                    break;
-                case 'last7days':
-                    startDate = new Date(today);
-                    startDate.setDate(today.getDate() - 7);
-                    break;
-                case 'last30days':
-                    startDate = new Date(today);
-                    startDate.setDate(today.getDate() - 30);
-                    break;
-                case 'thisMonth':
-                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                    break;
-                case 'lastMonth':
-                    startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-                    endDate = new Date(today.getFullYear(), today.getMonth(), 0); // Last day of previous month
-                    break;
-                case 'custom':
-                    startDate = customStartDate ? new Date(customStartDate) : null;
-                    endDate = customEndDate ? new Date(customEndDate) : null;
-                    break;
-                default:
-                    startDate = null;
-                    endDate = null;
-            }
+    const calculateDateRange = (rangeType) => {
+        const today = new Date();
+        let startDate = null;
+        let endDate = today;
 
-            // Ensure endDate is not in the future if startDate is not null
-            if (startDate && endDate && endDate.getTime() > today.getTime()) {
-                endDate = today;
-            }
+        switch (rangeType) {
+            case 'allTime': startDate = null; endDate = null; break;
+            case 'last7days': startDate = new Date(today); startDate.setDate(today.getDate() - 7); break;
+            case 'last30days': startDate = new Date(today); startDate.setDate(today.getDate() - 30); break;
+            case 'thisMonth': startDate = new Date(today.getFullYear(), today.getMonth(), 1); break;
+            case 'lastMonth': startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1); endDate = new Date(today.getFullYear(), today.getMonth(), 0); break;
+            case 'custom':
+                startDate = customStartDate ? new Date(customStartDate) : null;
+                endDate = customEndDate ? new Date(customEndDate) : null;
+                break;
+        }
 
-            return { startDate, endDate };
-        };
+        if (startDate && endDate && endDate.getTime() > today.getTime()) endDate = today;
 
-        // Function to update UI based on loading/error/data state
-        const updateUI = () => {
-            statusMessageDiv.innerHTML = ''; // Clear previous messages
-            paymentsTableContainer.classList.add('hidden'); // Hide table by default
+        return { startDate, endDate };
+    };
 
-            if (loading) {
-                statusMessageDiv.innerHTML = `
-                    <div class="flex justify-center items-center py-8">
-                        <div class="loading-spinner border-b-2 border-blue-600"></div>
-                        <p class="ml-4 text-blue-600 text-lg">Loading payments...</p>
-                    </div>
+    const updateUI = () => {
+        statusMessageDiv.innerHTML = '';
+        paymentsTableContainer.classList.add('hidden');
+
+        if (loading) {
+            statusMessageDiv.innerHTML = `
+                <div class="flex justify-center items-center py-8">
+                    <div class="loading-spinner border-b-2 border-blue-600"></div>
+                    <p class="ml-4 text-blue-600 text-lg">Loading payments...</p>
+                </div>
+            `;
+        } else if (error) {
+            statusMessageDiv.innerHTML = `
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline ml-2">${error}</span>
+                </div>
+            `;
+        } else if (payments.length === 0) {
+            statusMessageDiv.innerHTML = `<p class="text-center text-gray-600 text-lg py-8">No payments found for the selected timeframe.</p>`;
+        } else {
+            paymentsTableContainer.classList.remove('hidden');
+            paymentsTableBody.innerHTML = '';
+
+            const sortedPayments = [...payments].sort((a, b) => b.id - a.id);
+            sortedPayments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.amount} ${payment.currency}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            ${payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${payment.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.method}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        ${Array.isArray(payment.subjects) ? payment.subjects.join(', ') : payment.subjects}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.grade}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        ${new Date(payment.createdAt).toLocaleString()}
+                    </td>
                 `;
-            } else if (error) {
-                statusMessageDiv.innerHTML = `
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <strong class="font-bold">Error!</strong>
-                        <span class="block sm:inline ml-2">${error}</span>
-                    </div>
-                `;
-            } else if (payments.length === 0) {
-                statusMessageDiv.innerHTML = `
-                    <p class="text-center text-gray-600 text-lg py-8">No payments found for the selected timeframe.</p>
-                `;
-            } else {
-                paymentsTableContainer.classList.remove('hidden');
-                paymentsTableBody.innerHTML = ''; // Clear existing rows
-
-                // Sort payments by ID in descending order
-                const sortedPayments = [...payments].sort((a, b) => b.id - a.id);
-
-                sortedPayments.forEach(payment => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.name}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.amount} ${payment.currency}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.description}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                ${payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                ${payment.status}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.method}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            ${Array.isArray(payment.subjects) ? payment.subjects.join(', ') : payment.subjects}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${payment.grade}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            ${new Date(payment.createdAt).toLocaleString()}
-                        </td>
-                    `;
-                    paymentsTableBody.appendChild(row);
-                });
-            }
-
-            // Update button active states
-            Array.from(timeframeButtons.children).forEach(button => {
-                if (button.dataset.range === selectedRange) {
-                    button.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                    button.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-blue-100', 'hover:text-blue-700');
-                } else {
-                    button.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
-                    button.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-blue-100', 'hover:text-blue-700');
-                }
+                paymentsTableBody.appendChild(row);
             });
-        };
+        }
 
-        // Function to fetch payments from the API
-        const fetchPayments = async () => {
-            loading = true;
-            error = null;
-            payments = [];
-            updateUI(); // Update UI to show loading state
-
-            // FIX: Use an absolute URL for the API endpoint
-            let url = 'https://tuitionfee.lushaitech.com/api/get-payments'; // Assuming your backend runs on localhost:3000
-            const { startDate, endDate } = calculateDateRange(selectedRange);
-
-            if (startDate && endDate) {
-                // Append query parameters if a date range is selected
-                url += `?rangeStart=${formatDate(startDate)}&rangeEnd=${formatDate(endDate)}`;
-            } else if (startDate) {
-                url += `?rangeStart=${formatDate(startDate)}`;
-            } else if (endDate) {
-                url += `?rangeEnd=${formatDate(endDate)}`;
-            }
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                payments = data; // Assign fetched data
-            } catch (err) {
-                error = err.message;
-                console.error("Fetch error:", err);
-            } finally {
-                loading = false;
-                updateUI(); // Update UI with fetched data or error
-            }
-        };
-
-        // Event Listeners
-        timeframeButtons.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON') {
-                selectedRange = event.target.dataset.range;
-                customStartDate = ''; // Clear custom dates
-                customEndDate = '';
-                startDateInput.value = '';
-                endDateInput.value = '';
-                fetchPayments();
+        Array.from(timeframeButtons.children).forEach(button => {
+            if (button.dataset.range === selectedRange) {
+                button.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                button.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-blue-100', 'hover:text-blue-700');
+            } else {
+                button.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                button.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-blue-100', 'hover:text-blue-700');
             }
         });
+    };
 
-        applyCustomRangeBtn.addEventListener('click', () => {
-            customStartDate = startDateInput.value;
-            customEndDate = endDateInput.value;
-            if (!customStartDate || !customEndDate) {
-                error = 'Please select both start and end dates for a custom range.';
-                updateUI();
+    const fetchPayments = async () => {
+        loading = true;
+        error = null;
+        payments = [];
+        updateUI();
+
+        let url = `${BACKEND_URL}/api/get-payments`;
+        const { startDate, endDate } = calculateDateRange(selectedRange);
+
+        if (startDate && endDate) {
+            url += `?rangeStart=${formatDate(startDate)}&rangeEnd=${formatDate(endDate)}`;
+        } else if (startDate) {
+            url += `?rangeStart=${formatDate(startDate)}`;
+        } else if (endDate) {
+            url += `?rangeEnd=${formatDate(endDate)}`;
+        }
+
+        try {
+            const response = await fetch(url);
+            if (response.status === 401) {
+                window.location.href = '/login';
                 return;
             }
-            selectedRange = 'custom';
-            fetchPayments();
-        });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            payments = data;
+        } catch (err) {
+            error = err.message;
+            console.error("Fetch error:", err);
+        } finally {
+            loading = false;
+            updateUI();
+        }
+    };
 
-        resetRangeBtn.addEventListener('click', () => {
-            selectedRange = 'allTime';
+    // Logout
+    logoutButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/logout`, {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Logout failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('An error occurred during logout.');
+        }
+    });
+
+    timeframeButtons.addEventListener('click', (event) => {
+        if (event.target.tagName === 'BUTTON') {
+            selectedRange = event.target.dataset.range;
             customStartDate = '';
             customEndDate = '';
             startDateInput.value = '';
             endDateInput.value = '';
             fetchPayments();
-        });
+        }
+    });
 
-        // Initial fetch on page load
-        document.addEventListener('DOMContentLoaded', fetchPayments);
-    </script>
+    applyCustomRangeBtn.addEventListener('click', () => {
+        customStartDate = startDateInput.value;
+        customEndDate = endDateInput.value;
+        if (!customStartDate || !customEndDate) {
+            error = 'Please select both start and end dates for a custom range.';
+            updateUI();
+            return;
+        }
+        selectedRange = 'custom';
+        fetchPayments();
+    });
+
+    resetRangeBtn.addEventListener('click', () => {
+        selectedRange = 'allTime';
+        customStartDate = '';
+        customEndDate = '';
+        startDateInput.value = '';
+        endDateInput.value = '';
+        fetchPayments();
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchPayments);
+</script>
+
 </body>
 </html>

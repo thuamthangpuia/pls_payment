@@ -1,48 +1,56 @@
 import { Request, Response } from "express";
 import { db } from "../config/dbconfig.ts";
-import { between } from "drizzle-orm";
+import { and, between, eq } from "drizzle-orm";
 import { paymentInLushaieduPayment } from "../models/schema.ts";
 
 
 export async function getPayments(req: Request, res: Response) {
-    // Use req.query for filtering parameters, as it's more standard for ranges
-    const { rangeStart: rangeStartParam, rangeEnd: rangeEndParam } = req.query;
+    console.log(req.session)
+
+    if(!req.session.user){
+        res.status(401).json("Unauthorized")
+        return
+    }
+    const { rangeStart: rangeStartParam, rangeEnd: rangeEndParam,  } = req.query;
+
+   
 
     if (rangeStartParam || rangeEndParam) {
-        // Ensure params are strings before creating Date objects
         const rangeStart = new Date(rangeStartParam as string);
         const rangeEnd = new Date(rangeEndParam as string);
 
         if (isNaN(rangeStart.getTime()) || isNaN(rangeEnd.getTime())) {
-            return res.status(400).json({ error: 'Invalid date range provided. Please use a valid date format (e.g., YYYY-MM-DD).' });
+            return res.status(400).json({
+                error: 'Invalid date range provided. Please use a valid date format (e.g., YYYY-MM-DD).'
+            });
         }
 
         try {
-            const formattedRangeStart = rangeStart.toISOString().split('T')[0]; // Gets 'YYYY-MM-DD'
-            const formattedRangeEnd = rangeEnd.toISOString().split('T')[0];     // Gets 'YYYY-MM-DD'
+            const formattedRangeStart = rangeStart.toISOString().split('T')[0];
+            const formattedRangeEnd = rangeEnd.toISOString().split('T')[0];
 
-            // Drizzle ORM's `between` function is used directly inside the `where` clause
             const paymentsData = await db.query.paymentInLushaieduPayment.findMany({
-                where: between(paymentInLushaieduPayment.createdAt, formattedRangeStart, formattedRangeEnd),
+                where: and(
+                    between(paymentInLushaieduPayment.createdAt, formattedRangeStart, formattedRangeEnd),
+                    eq(paymentInLushaieduPayment.status, "paid")
+                ),
+
             });
 
-            res.status(200).json(paymentsData);
+            return res.status(200).json(paymentsData);
         } catch (error) {
             console.error('Error fetching payments:', error);
-            res.status(500).json({ error: 'Failed to fetch payments.' });
+            return res.status(500).json({ error: 'Failed to fetch payments.' });
         }
     } else {
-        // If no date range is provided, you might want to return all payments
-        // or a default recent range, or require the range.
-        // For now, I'll assume you want to return an error or all payments.
         try {
-            const allPayments = await db.query.paymentInLushaieduPayment.findMany();
-            res.status(200).json(allPayments);
+            const allPayments = await db.query.paymentInLushaieduPayment.findMany({
+                where: (eq(paymentInLushaieduPayment.status,"paid"))
+            });
+            return res.status(200).json(allPayments);
         } catch (error) {
             console.error('Error fetching all payments:', error);
-            res.status(500).json({ error: 'Failed to fetch all payments.' });
+            return res.status(500).json({ error: 'Failed to fetch all payments.' });
         }
-        // Or, if range is mandatory:
-        // return res.status(400).json({ error: 'Date range (rangeStart and rangeEnd) is required.' });
     }
 }
