@@ -84,6 +84,16 @@
             </button>
         </div>
 
+        <div id="aggregatesSummary" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 p-4 bg-blue-50 rounded-lg shadow-md hidden">
+            <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                <p class="text-lg font-semibold text-gray-700">Total Payments</p>
+                <p id="totalPayments" class="text-2xl font-bold text-blue-700 mt-1"></p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                <p class="text-lg font-semibold text-gray-700">Total Paid Amount</p>
+                <p id="totalPaidAmount" class="text-2xl font-bold text-green-600 mt-1"></p>
+            </div>
+        </div>
         <div id="statusMessage" class="text-center py-8"></div>
 
         <div id="paymentsTableContainer" class="overflow-x-auto rounded-lg shadow-md border border-gray-200 hidden">
@@ -120,6 +130,12 @@
     const statusMessageDiv = document.getElementById('statusMessage');
     const paymentsTableContainer = document.getElementById('paymentsTableContainer');
     const paymentsTableBody = document.getElementById('paymentsTableBody');
+
+    // Updated aggregate display elements
+    const aggregatesSummaryDiv = document.getElementById('aggregatesSummary');
+    const totalPaymentsSpan = document.getElementById('totalPayments'); // Now counts only paid
+    const totalPaidAmountSpan = document.getElementById('totalPaidAmount');
+    // Removed totalPendingAmountSpan as it's no longer needed in HTML or JS
 
     // State variables
     let selectedRange = 'allTime';
@@ -163,6 +179,7 @@
     const updateUI = () => {
         statusMessageDiv.innerHTML = '';
         paymentsTableContainer.classList.add('hidden');
+        aggregatesSummaryDiv.classList.add('hidden'); // Hide aggregates by default
 
         if (loading) {
             statusMessageDiv.innerHTML = `
@@ -181,6 +198,24 @@
         } else if (payments.length === 0) {
             statusMessageDiv.innerHTML = `<p class="text-center text-gray-600 text-lg py-8">No payments found for the selected timeframe.</p>`;
         } else {
+            // Display Aggregates
+            aggregatesSummaryDiv.classList.remove('hidden');
+            let totalPaidCount = 0; // New variable to count only paid payments
+            let totalPaidAmount = 0;
+
+            payments.forEach(payment => {
+                const amount = parseFloat(payment.amount); // Ensure amount is a number
+                if (!isNaN(amount) && payment.status === 'paid') { // Only count and sum 'paid' payments
+                    totalPaidCount++;
+                    totalPaidAmount += amount;
+                }
+            });
+
+            totalPaymentsSpan.textContent = totalPaidCount; // Update to show count of paid payments
+            totalPaidAmountSpan.textContent = `₹${totalPaidAmount.toFixed(2)}`; // Assuming INR, adjust currency as needed
+            // Removed totalPendingAmountSpan update
+
+            // Display Payments Table
             paymentsTableContainer.classList.remove('hidden');
             paymentsTableBody.innerHTML = '';
 
