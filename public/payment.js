@@ -12,14 +12,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const grade = document.getElementById('grade').value;
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value;
+        const emailInput = document.getElementById('email').value;
+        const email = emailInput.trim() !== '' ? emailInput.trim() : undefined;
+
         const paymentStatusDiv = document.getElementById('paymentStatus');
         paymentStatusDiv.className = '';
         paymentStatusDiv.textContent = 'Initiating payment... Please wait.';
 
         const BACKEND_URL = 'https://tuitionfee.lushaitech.com';
         try {
-    
+
             const createOrderResponse = await fetch(`${BACKEND_URL}/api/create-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const orderData = await createOrderResponse.json();
             const razorpayOrderId = orderData.id;
 
-          
+
             const keyRes = await fetch(`${BACKEND_URL}/api/razorpay-key`);
             if (!keyRes.ok) {
                 throw new Error('Failed to fetch Razorpay Key ID');
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const keyData = await keyRes.json();
             const RAZORPAY_KEY_ID = keyData.key;
 
-     
+
             const options = {
                 key: RAZORPAY_KEY_ID,
                 amount: amountInPaise,
@@ -118,13 +120,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 prefill: {
                     name: name,
-                    email: email,
+                    ...(email && { email }),
                     contact: phone,
                 },
                 notes: {
                     'app_description': "LushAi",
                     name: name,
-                    email: email,
+                    ...(email && { email }),
                     phone: phone,
                     grade: grade,
                     subjects: subjects.join ? subjects.join(', ') : subjects

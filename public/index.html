@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <header class="navbar">
@@ -15,7 +17,7 @@
             <div href="https://lushaitech.com" class="app-info">
                 <img src="/lushai_logo.svg" alt="App Logo" class="app-logo">
             </div>
-            
+
         </div>
     </header>
 
@@ -33,11 +35,13 @@
                 <input type="text" id="name" placeholder="Enter name here" required>
                 <br>
                 <label for="phone">Phone:</label>
-                <input type="tel" id="phone" placeholder="e.g., 9876543210 (10 digits)" pattern="[6-9]{1}[0-9]{9}" title="Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9." required>
+                <input type="tel" id="phone" placeholder="e.g., 9876543210 (10 digits)" pattern="[6-9]{1}[0-9]{9}"
+                    title="Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9." required>
                 <br>
-                <label for="email">Email:</label>
-                <input type="email" id="email" placeholder="Enter email" required>
+                <label for="email">Email <span style="font-weight: normal; color: #666;">(optional)</span>:</label>
+                <input type="email" id="email" placeholder="Enter email">
                 <br>
+
                 <label for="grade">Enter your class:</label>
                 <select name="grade" id="grade">
                     <option value="" disabled selected hidden>Select your class</option>
@@ -46,25 +50,29 @@
                     <option value="10">X</option>
                     <option value="11">XI</option>
                     <option value="12">XII</option>
-                    
+
                 </select>
                 <br>
                 <label>Subjects:</label>
                 <div class="checkbox-group" style="display: block;" id="subjectsGroup">
                     <div class="checkbox-item" style="display: flex; align-items: center; margin-bottom: 0.5em;">
-                        <input type="checkbox" id="maths" name="subjects" value="Mathematics" style="margin-right: 0.5em;">
+                        <input type="checkbox" id="maths" name="subjects" value="Mathematics"
+                            style="margin-right: 0.5em;">
                         <label for="maths" style="margin: 0;">Mathematics</label>
                     </div>
                     <div class="checkbox-item" style="display: flex; align-items: center; margin-bottom: 0.5em;">
-                        <input type="checkbox" id="science" name="subjects" value="Science" style="margin-right: 0.5em;">
+                        <input type="checkbox" id="science" name="subjects" value="Science"
+                            style="margin-right: 0.5em;">
                         <label for="science" style="margin: 0;">Science</label>
                     </div>
                     <div class="checkbox-item" style="display: flex; align-items: center; margin-bottom: 0.5em;">
-                        <input type="checkbox" id="physics" name="subjects" value="Physics" style="margin-right: 0.5em;">
+                        <input type="checkbox" id="physics" name="subjects" value="Physics"
+                            style="margin-right: 0.5em;">
                         <label for="physics" style="margin: 0;">Physics</label>
                     </div>
                     <div class="checkbox-item" style="display: flex; align-items: center; margin-bottom: 0.5em;">
-                        <input type="checkbox" id="chemistry" name="subjects" value="Chemistry" style="margin-right: 0.5em;">
+                        <input type="checkbox" id="chemistry" name="subjects" value="Chemistry"
+                            style="margin-right: 0.5em;">
                         <label for="chemistry" style="margin: 0;">Chemistry</label>
                     </div>
                 </div>
@@ -72,39 +80,42 @@
                 <button type="submit">Pay Now</button>
             </form>
             <script>
-            // Enforce required for grade and at least one subject
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.getElementById('paymentForm');
-                form.addEventListener('submit', function(e) {
-                    // Grade required
-                    const grade = document.getElementById('grade');
-                    const subjectsChecked = document.querySelectorAll('input[name="subjects"]:checked');
-                    let valid = true;
-                    if (!grade.value) {
-                        alert('Please select your class.');
-                        grade.focus();
-                        valid = false;
-                    } else if (subjectsChecked.length === 0) {
-                        alert('Please select at least one subject.');
-                        document.getElementById('subjectsGroup').scrollIntoView({behavior: 'smooth', block: 'center'});
-                        valid = false;
-                    }
-                    if (!valid) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        return false;
-                    }
-                }, true);
-            });
+                // Enforce required for grade and at least one subject
+                document.addEventListener('DOMContentLoaded', function () {
+                    const form = document.getElementById('paymentForm');
+                    form.addEventListener('submit', function (e) {
+                        // Grade required
+                        const grade = document.getElementById('grade');
+                        const subjectsChecked = document.querySelectorAll('input[name="subjects"]:checked');
+                        let valid = true;
+                        if (!grade.value) {
+                            alert('Please select your class.');
+                            grade.focus();
+                            valid = false;
+                        } else if (subjectsChecked.length === 0) {
+                            alert('Please select at least one subject.');
+                            document.getElementById('subjectsGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            valid = false;
+                        }
+                        if (!valid) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    }, true);
+                });
             </script>
             </form>
             <div id="paymentStatus"></div>
             <!-- Modal for receipt download -->
-            <div id="receiptModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); justify-content:center; align-items:center;">
-                <div style="background:#fff; padding:2rem; border-radius:8px; max-width:90vw; max-height:90vh; text-align:center;">
+            <div id="receiptModal" class="modal"
+                style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); justify-content:center; align-items:center;">
+                <div
+                    style="background:#fff; padding:2rem; border-radius:8px; max-width:90vw; max-height:90vh; text-align:center;">
                     <h2>Payment Successful!</h2>
                     <p>A receipt has been sent to your email.</p>
-                    <button id="openReceiptBtn" style="margin-top:1rem; padding:0.5rem 1.5rem; font-size:1rem;">Open Receipt PDF</button>
+                    <button id="openReceiptBtn" style="margin-top:1rem; padding:0.5rem 1.5rem; font-size:1rem;">Open
+                        Receipt PDF</button>
                     <br><br>
                     <button id="closeModalBtn" style="padding:0.3rem 1rem;">Close</button>
                 </div>
@@ -115,9 +126,10 @@
     <footer class="footer">
         <div class="container footer-container">
             <p>&copy; 2025 LushAITech. All rights reserved.</p>
-            
+
         </div>
     </footer>
-  <script src="payment.js"></script>
-    </body>
+    <script src="payment.js"></script>
+</body>
+
 </html>
